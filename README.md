@@ -21,6 +21,7 @@ git clone --dissociate https://github.com/Flakturm/adonis-api-docker-compose
 
 ## Setup dev enviornment
 For example: **adonis-is.cool**
+
 Add it in **/etc/hosts**
 ```bash
 sudo nano /etc/hosts
@@ -36,8 +37,13 @@ cd docker/reverseProxy/ && docker-compose up -d && cd ../../
 ```
 
 ## Development environment .env
-Copy .env.example to .env and fill in **SITE_URL**.
+Copy **.env.example** to **.env** and fill in **SITE_URL**.
+
 Change DB user and password if needed.
+```bash
+cp .env.example .env
+```
+
 ```
 SITE_URL=adonis-is.cool
 # development
@@ -75,6 +81,7 @@ docker-compose restart
 
 ## Open your app in browser
 URL:  http://adonis-is.cool
+
 Adminer:  http://localhost:8080
 
 ## Migrations
