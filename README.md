@@ -46,7 +46,7 @@ DOCKER_KUE_COMMAND='yarn run dev-kue'
 DOCKER_SCHEDULER_COMMAND='yarn run dev-scheduler'
 ```
 ## Production environment .env
-Uncomment three docker commands and comment development variables.
+Uncomment three docker commands and comment out development variables above.
 Change DB user and password if needed.
 ```
 SITE_URL=adonis-is.com
