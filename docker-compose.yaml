@@ -1,0 +1,163 @@
+version: '3'
+services:
+    web:
+      container_name: web
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "200k"
+          max-file: "10"
+      image: nginx
+      restart: always
+      volumes:
+        - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+        - .:/app
+      expose:
+        - "80"
+      links:
+        - app
+      depends_on:
+        - app
+      networks:
+        - nginx-proxy
+        - default
+      environment:
+        - VIRTUAL_HOST=${SITE_URL}
+
+    app:
+      container_name: app
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "200k"
+          max-file: "10"
+      build:
+        context: ./docker/adonis/
+      restart: always
+      working_dir: /app
+      depends_on:
+        - postgres
+        - redis
+      expose:
+        - "3333"
+      networks:
+        - default
+      volumes:
+        - .:/app
+      command: sh -c ${DOCKER_APP_COMMAND}
+
+    kue:
+      container_name: kue
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "200k"
+          max-file: "10"
+      build:
+        context: ./docker/adonis/
+      restart: always
+      working_dir: /app
+      depends_on:
+        - redis
+        - app
+      networks:
+        - default
+      volumes:
+        - .:/app
+      command: bash -c ${DOCKER_KUE_COMMAND}
+
+    scheduler:
+      container_name: scheduler
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "200k"
+          max-file: "10"
+      restart: always
+      build:
+        context: ./docker/adonis/
+      working_dir: /app
+      depends_on:
+        - postgres
+      links:
+        - "postgres"
+      networks:
+        - default
+      volumes:
+        - .:/app
+      command: bash -c ${DOCKER_SCHEDULER_COMMAND}
+
+    postgres:
+      container_name: postgres
+      restart: always
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "200k"
+          max-file: "10"
+      image: postgres:10.4-alpine
+      expose:
+        - "5432"
+      #ports:
+      # - "5428:5432"
+      environment:
+        - DEBUG=false
+        - POSTGRES_USER=${DB_USER}
+        - POSTGRES_PASSWORD=${DB_PASSWORD}
+        - POSTGRES_DB=${DB_DATABASE}
+      networks:
+        - default
+      volumes:
+        - ./docker/data/postgres-10/var/lib/postgresql
+
+    # backup:
+    #   restart: always
+    #   logging:
+    #     driver: "json-file"
+    #     options:
+    #       max-size: "200k"
+    #       max-file: "10"
+    #   image: reg2005/docker-postgres-aws-backup
+    #   depends_on:
+    #     - postgres
+    #   environment:
+    #     - CRON_SCHEDULE=${BACKUP_CRON_SCHEDULE}
+    #     - DB_HOST=postgres
+    #     - DB_PASS=${DB_PASSWORD}
+    #     - DB_USER=${DB_USER}
+    #     - DB_NAME=${DB_DATABASE}
+    #     - S3_PATH=${BACKUP_S3_PATH}
+    #     - AWS_ACCESS_KEY_ID=${BACKUP_AWS_ACCESS_KEY_ID}
+    #     - AWS_SECRET_ACCESS_KEY=${BACKUP_AWS_SECRET_ACCESS_KEY}
+    #     - AWS_DEFAULT_REGION=${BACKUP_AWS_DEFAULT_REGION}
+    #     - KEEP_BACKUP_DAYS=7
+    #     - WEBHOOK=${BACKUP_WEBHOOK}
+
+    redis:
+      container_name: redis
+      restart: always
+      image: "redis:alpine"
+      networks:
+        - default
+      #ports:
+      # - '6378:6379'
+      volumes:
+        - ./docker/data/redis:/data
+      expose:
+        - 6379
+
+    adminer:
+      container_name: adminer
+      image: adminer
+      restart: always
+      ports:
+        - 8080:8080
+      depends_on:
+        - postgres
+      networks:
+        - default
+
+networks:
+  nginx-proxy:
+    external:
+      name: nginx-proxy

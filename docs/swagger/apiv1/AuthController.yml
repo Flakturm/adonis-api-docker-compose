@@ -1,0 +1,26 @@
+/api/v1/auth/base-login:
+  post:
+    tags:
+      - Auth
+    security: []
+    description: Login
+    parameters:
+      - name: credentials
+        in:  body
+        required: true
+        type: string
+        schema:
+          properties:
+            email:
+              type: string
+              example: test@ya.ru
+            password:
+              type: string
+              example: '2004002'
+    produces:
+      - application/json
+    responses:
+      200:
+        description: Success
+      424:
+        description: Project not found

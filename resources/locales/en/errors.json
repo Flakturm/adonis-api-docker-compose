@@ -1,0 +1,8 @@
+{
+  "unknownError": "Unknown error, please retry",
+  "userNotFound": "User is not found",
+  "forgotPassword": "Forgot password error",
+  "twoFactorActive": "Two factor is active, please disable it",
+  "twoFactorIncorrectCode": "Incorrect code",
+  "userIsNotDefined": "User is not defined"
+}

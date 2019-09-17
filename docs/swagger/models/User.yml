@@ -1,0 +1,39 @@
+definitions:
+  UserBase:
+    type: object
+    properties:
+      id:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      active:
+        type: boolean
+      created_at:
+        type: string
+      updated_at:
+        type: string
+    required:
+      - emails
+      - password
+  UserRegister:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+      - emails
+      - password
+  UserLogin:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+      - emails
+      - password
