@@ -75,6 +75,7 @@ docker-compose restart
 
 ## Open your app in browser
 URL:  http://adonis-is.cool
+Adminer:  http://localhost:8080
 
 ## Migrations
 
